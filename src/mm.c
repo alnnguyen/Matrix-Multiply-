@@ -47,13 +47,13 @@ double now_seconds(void) {
     return t.tv_sec + t.tv_nsec / 1e9; // Converts the time to seconds:
 }
 
-// argc is the argument count. argv is an array of argument strings.
 int main(int argc, char **argv) {
-    int N = (argc > 1) ? atoi(argv[1]) : 512;
+    const char *version = (argc > 1) ? argv[1] : "ijk";   // NEW: 1st arg = which version
+    int N = (argc > 2) ? atoi(argv[2]) : 512;             // NEW: 2nd arg = size
 
     double *A = malloc((size_t)N * N * sizeof(double));
     double *B = malloc((size_t)N * N * sizeof(double));
-    double *C = malloc((size_t)N * N * sizeof(double));
+    double *C = calloc((size_t)N * N, sizeof(double));    // NEW: calloc so C starts at 0
     if (!A || !B || !C) { fprintf(stderr, "allocation failed\n"); return 1; }
 
     srand(42);
@@ -63,13 +63,20 @@ int main(int argc, char **argv) {
     }
 
     double start = now_seconds();
-    mm_ijk(A, B, C, N);
+    if (strcmp(version, "ijk") == 0) {                    // NEW: pick the version
+        mm_ijk(A, B, C, N);
+    } else if (strcmp(version, "ikj") == 0) {
+        mm_ikj(A, B, C, N);
+    } else {
+        fprintf(stderr, "unknown version: %s (use ijk or ikj)\n", version);
+        return 1;
+    }
     double elapsed = now_seconds() - start;
 
     double checksum = 0.0;
     for (long i = 0; i < (long)N * N; i++) checksum += C[i];
 
-    printf("ijk,N=%d,seconds=%.6f,checksum=%.6f\n", N, elapsed, checksum);
+    printf("%s,N=%d,seconds=%.6f,checksum=%.6f\n", version, N, elapsed, checksum);  // NEW: prints version name
 
     free(A); free(B); free(C);
     return 0;
