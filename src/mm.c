@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
     double *C = calloc((size_t)N * N, sizeof(double));    // NEW: calloc so C starts at 0
     if (!A || !B || !C) { fprintf(stderr, "allocation failed\n"); return 1; }
 
-    srand(42);
+    srand(42);          
     for (long i = 0; i < (long)N * N; i++) {
         A[i] = (double)rand() / RAND_MAX;
         B[i] = (double)rand() / RAND_MAX;
