@@ -1,0 +1,24 @@
+==887111== Cachegrind, a high-precision tracing profiler
+==887111== Copyright (C) 2002-2025, and GNU GPL'd, by Nicholas Nethercote et al.
+==887111== Using Valgrind-3.27.1 and LibVEX; rerun with -h for copyright info
+==887111== Command: ./mm_O2 ijk 256
+==887111== 
+--887111-- warning: L3 cache found, using its data for the LL simulation.
+--887111-- warning: specified LL cache: line_size 64  assoc 16  total_size 75,497,472
+--887111-- warning: simulated LL cache: line_size 64  assoc 18  total_size 75,497,472
+==887111== 
+==887111== I refs:        143,512,955
+==887111== I1  misses:          1,466
+==887111== LLi misses:          1,461
+==887111== I1  miss rate:        0.00%
+==887111== LLi miss rate:        0.00%
+==887111== 
+==887111== D refs:         54,195,063  (36,155,639 rd   + 18,039,424 wr)
+==887111== D1  misses:     16,894,391  (16,869,146 rd   +     25,245 wr)
+==887111== LLd misses:         26,560  (     1,396 rd   +     25,164 wr)
+==887111== D1  miss rate:        31.2% (      46.7%     +        0.1%  )
+==887111== LLd miss rate:         0.0% (       0.0%     +        0.1%  )
+==887111== 
+==887111== LL refs:        16,895,857  (16,870,612 rd   +     25,245 wr)
+==887111== LL misses:          28,021  (     2,857 rd   +     25,164 wr)
+==887111== LL miss rate:          0.0% (       0.0%     +        0.1%  )

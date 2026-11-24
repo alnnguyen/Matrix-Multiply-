@@ -76,7 +76,8 @@ int main(int argc, char **argv) {
     double checksum = 0.0;
     for (long i = 0; i < (long)N * N; i++) checksum += C[i];
 
-    printf("%s,N=%d,seconds=%.6f,checksum=%.6f\n", version, N, elapsed, checksum);  // NEW: prints version name
+
+    printf("%s,%d,%.6f,%.6f\n", version, N, elapsed, checksum);
 
     free(A); free(B); free(C);
     return 0;
