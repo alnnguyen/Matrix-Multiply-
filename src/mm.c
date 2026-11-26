@@ -40,6 +40,29 @@ void mm_ikj(const double *A, const double *B, double *C, int N) {
     }
 }   
 
+// Cache-blocked (tiled) i-k-j matrix multiply.
+// Assumes N is a multiple of T.
+void mm_tiled(const double *A, const double *B, double *C, int N, int T) {
+    // Outer 3 loops: choose which T×T tile to work on
+    for (int ii = 0; ii < N; ii += T) {          // tile row of C (and A)
+        for (int kk = 0; kk < N; kk += T) {      // tile column of A / tile row of B
+            for (int jj = 0; jj < N; jj += T) {  // tile column of C (and B)
+
+                // Inner 3 loops: normal ikj, but only inside this tile
+                for (int i = ii; i < ii + T; i++) {
+                    for (int k = kk; k < kk + T; k++) {
+                        double a_ik = A[i * N + k];          // stays in a register
+                        for (int j = jj; j < jj + T; j++) {
+                            C[i * N + j] += a_ik * B[k * N + j];
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
 // Defines a helper that returns the current monotonic time in seconds
 double now_seconds(void) {
     struct timespec t;
@@ -50,6 +73,7 @@ double now_seconds(void) {
 int main(int argc, char **argv) {
     const char *version = (argc > 1) ? argv[1] : "ijk";   // NEW: 1st arg = which version
     int N = (argc > 2) ? atoi(argv[2]) : 512;             // NEW: 2nd arg = size
+    int T = (argc > 3) ? atoi(argv[3]) : 64;   // 3rd arg for tile size
 
     double *A = malloc((size_t)N * N * sizeof(double));
     double *B = malloc((size_t)N * N * sizeof(double));
@@ -67,7 +91,12 @@ int main(int argc, char **argv) {
         mm_ijk(A, B, C, N);
     } else if (strcmp(version, "ikj") == 0) {
         mm_ikj(A, B, C, N);
-    } else {
+    } 
+    else if (strcmp(version, "tiled") == 0) {
+    mm_tiled(A, B, C, N, T);
+    }
+
+    else {
         fprintf(stderr, "unknown version: %s (use ijk or ikj)\n", version);
         return 1;
     }
